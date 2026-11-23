@@ -159,8 +159,13 @@ export class Engine {
     this.rec = null;
   }
 
+  // iPhone: by default Web Audio is silenced by the ring/silent switch.
+  // 'playback' makes it play like a music app (Safari 17+).
+  setSession(type) { try { if (navigator.audioSession) navigator.audioSession.type = type; } catch {} }
+
   ensureCtx() {
     if (!this.ctx) {
+      this.setSession('playback');
       const AC = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AC({ latencyHint: 'interactive' });
       this.ctx.addEventListener('statechange', () => {
@@ -265,6 +270,7 @@ export class Engine {
     if (ctx.state !== 'running') await ctx.resume();
     if (!ctx.audioWorklet) { const e = new Error('unsupported'); e.code = 'unsupported'; throw e; }
     if (!this.workletLoaded) { await ctx.audioWorklet.addModule(new URL('./recorder-worklet.js', import.meta.url)); this.workletLoaded = true; }
+    this.setSession('play-and-record');
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation: processing, noiseSuppression: processing, autoGainControl: processing, channelCount: 1 },
     });
@@ -325,6 +331,7 @@ export class Engine {
     try { r.stream.getTracks().forEach(t => t.stop()); } catch {}
     try { r.src.disconnect(); r.tap.disconnect(); r.silent.disconnect(); } catch {}
     this.rec = null;
+    this.setSession('playback');
   }
 
   // ---------- export ----------
