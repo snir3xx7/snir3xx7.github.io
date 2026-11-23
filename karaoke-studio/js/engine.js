@@ -161,6 +161,25 @@ export class Engine {
 
   // iPhone: by default Web Audio is silenced by the ring/silent switch.
   // 'playback' makes it play like a music app (Safari 17+).
+  // Second method for iPhone: a silent looping <audio> element switches the
+  // page to "media playback" mode, so Web Audio is no longer muted by the switch.
+  keepAlive(on) {
+    const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!ios) return;
+    if (!this.silentEl) {
+      const sr = 8000, n = sr / 2, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+      const w = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); };
+      w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true);
+      v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+      w(36, 'data'); v.setUint32(40, n * 2, true);
+      const el = document.createElement('audio');
+      el.src = URL.createObjectURL(new Blob([b], { type: 'audio/wav' }));
+      el.loop = true; el.setAttribute('playsinline', ''); el.setAttribute('x-webkit-airplay', 'deny'); el.preload = 'auto';
+      this.silentEl = el;
+    }
+    if (on) { const p = this.silentEl.play(); if (p && p.catch) p.catch(() => {}); } else this.silentEl.pause();
+  }
+
   setSession(type) { try { if (navigator.audioSession) navigator.audioSession.type = type; } catch {} }
 
   ensureCtx() {
@@ -207,6 +226,7 @@ export class Engine {
 
   async play() {
     if (this.playing || !this.project) return;
+    this.keepAlive(true);
     const ctx = this.ensureCtx();
     if (ctx.state !== 'running') await ctx.resume();
     if (this.pos >= this.duration - 0.05) this.pos = 0;
@@ -238,6 +258,7 @@ export class Engine {
     this.pos = this.position();
     this.playing = false;
     this.stopSources();
+    this.keepAlive(false);
   }
 
   stop() { this.pause(); this.pos = 0; }

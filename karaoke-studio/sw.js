@@ -1,5 +1,5 @@
 // Service worker: caches the app shell so it opens offline after the first visit.
-const VERSION = 'ks-v2';
+const VERSION = 'ks-v3';
 const SHELL = ['./', 'index.html', 'css/app.css', 'js/main.js', 'js/engine.js', 'js/store.js', 'js/wav.js', 'js/zip.js', 'js/lyrics.js',
   'js/recorder-worklet.js', 'manifest.webmanifest', 'catalog.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-180.png',
   'fonts/rubik-hebrew-400-normal.woff2', 'fonts/rubik-hebrew-500-normal.woff2', 'fonts/rubik-hebrew-700-normal.woff2',

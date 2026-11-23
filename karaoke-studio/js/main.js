@@ -1,8 +1,8 @@
-import { Engine, FX_PRESETS, takeStart } from './engine.js';
-import { store, isQuotaError } from './store.js';
-import { encodeWav, bufferToWav, peakOf } from './wav.js';
-import { makeZip, readZip } from './zip.js';
-import { fmtTime, textToLines, parseLRC, parseSRT, toLRC, toSRT, lyricState } from './lyrics.js';
+import { Engine, FX_PRESETS, takeStart } from './engine.js?v=3';
+import { store, isQuotaError } from './store.js?v=3';
+import { encodeWav, bufferToWav, peakOf } from './wav.js?v=3';
+import { makeZip, readZip } from './zip.js?v=3';
+import { fmtTime, textToLines, parseLRC, parseSRT, toLRC, toSRT, lyricState } from './lyrics.js?v=3';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
