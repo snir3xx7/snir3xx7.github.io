@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#170c2b">
+<meta name="description" content="קריוקי סטודיו – שרים, מקליטים ומייצאים, בחינם ובלי חשבון. הכול נשמר במכשיר שלך.">
+<title>קריוקי סטודיו</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true"></span>קריוקי סטודיו</div>
+  <nav class="nav" aria-label="ניווט ראשי">
+    <a href="#library" data-nav="library">ספריית קריוקי</a>
+    <a href="#studio" data-nav="studio">האולפן שלי</a>
+  </nav>
+  <div id="saveStatus" class="save" role="status" aria-live="polite"></div>
+</header>
+
+<main>
+<!-- ============ LIBRARY ============ -->
+<section id="view-library" class="view" hidden>
+  <div class="lib-head">
+    <h1>מה שרים היום?</h1>
+    <div class="search-row">
+      <input id="q" type="search" placeholder="חיפוש לפי שיר או אמן" aria-label="חיפוש לפי שיר או אמן" autocomplete="off">
+      <select id="langFilter" aria-label="סינון לפי שפה">
+        <option value="">כל השפות</option>
+        <option value="he">עברית</option>
+        <option value="en">אנגלית</option>
+        <option value="other">אחר</option>
+      </select>
+      <button id="favFilter" class="chip" aria-pressed="false">מועדפים</button>
+    </div>
+  </div>
+  <ul id="songList" class="songs"></ul>
+  <p id="emptyList" class="empty" hidden>לא נמצאו שירים. נסו מילה אחרת או נקו את הסינון.</p>
+
+  <div class="import-box">
+    <h2>להביא שיר משלכם</h2>
+    <p class="muted">קבצים נשארים במכשיר ולא עולים לשום שרת. השתמשו רק בקבצים שמותר לכם להשתמש בהם.</p>
+    <div class="row wrap">
+      <label class="btn">ייבוא פלייבק (MP3 / WAV / M4A)
+        <input id="importPlayback" type="file" accept="audio/*,.mp3,.wav,.m4a" hidden></label>
+      <label class="btn ghost">פתיחת קובץ פרויקט (.zip)
+        <input id="importProject" type="file" accept=".zip,application/zip" hidden></label>
+    </div>
+    <p id="importMsg" class="msg" role="alert"></p>
+  </div>
+</section>
+
+<!-- ============ SING ============ -->
+<section id="view-sing" class="view sing" hidden>
+  <div class="sing-title">
+    <a href="#library" class="back" aria-label="חזרה לספרייה">‹ ספרייה</a>
+    <div>
+      <div id="singTitle" class="s-title" dir="auto"></div>
+      <div id="singArtist" class="s-artist" dir="auto"></div>
+    </div>
+    <a href="#studio" class="back">לאולפן ›</a>
+  </div>
+  <div class="stage" id="stage">
+    <div id="lineCur" class="line-cur" dir="auto"></div>
+    <div id="lineNext" class="line-next" dir="auto"></div>
+    <div id="countdown" class="countdown" hidden></div>
+  </div>
+  <div class="progress">
+    <span id="tCur" class="t">00:00</span>
+    <input id="seek" type="range" min="0" max="100" step="0.01" value="0" aria-label="מיקום בשיר">
+    <span id="tDur" class="t">00:00</span>
+  </div>
+  <div class="transport">
+    <button id="back5" class="round" aria-label="אחורה 5 שניות">−5</button>
+    <button id="playBtn" class="round big" aria-label="ניגון">▶</button>
+    <button id="fwd5" class="round" aria-label="קדימה 5 שניות">+5</button>
+    <button id="recBtn" class="round rec" aria-label="הקלטה"><span class="dot"></span></button>
+  </div>
+  <div class="rec-info">
+    <div id="recState" class="rec-state" hidden><span class="blink"></span> מקליט</div>
+    <div class="meter" aria-hidden="true"><div id="meterBar"></div></div>
+  </div>
+  <div class="sing-opts">
+    <label class="switch"><input id="optCount" type="checkbox" checked> ספירה לאחור</label>
+    <label class="switch"><input id="optPhones" type="checkbox" checked> אני עם אוזניות</label>
+    <button id="guideBtn" class="chip" hidden aria-pressed="false">קול הזמר: מושתק</button>
+  </div>
+  <p class="hint">מומלץ להקליט עם אוזניות כדי שהמיקרופון לא יקלוט את הפלייבק. בלי אוזניות, בטלו את "אני עם אוזניות" והדפדפן יפעיל סינון הד. ההרשאה למיקרופון מתבקשת רק כשלוחצים על הקלטה, וחיווי המיקרופון תלוי בדפדפן ובמכשיר.</p>
+  <p id="singMsg" class="msg" role="alert"></p>
+</section>
+
+<!-- ============ STUDIO ============ -->
+<section id="view-studio" class="view" hidden>
+  <div id="studioEmpty" class="empty-studio" hidden>
+    <h1>האולפן שלי</h1>
+    <p>עדיין לא נבחר פרויקט. בחרו שיר מהספרייה או ייבאו פלייבק.</p>
+    <a class="btn" href="#library">לספרייה</a>
+  </div>
+  <div id="studioMain" hidden>
+    <div class="studio-head">
+      <input id="pTitle" class="p-title" dir="auto" aria-label="שם השיר">
+      <input id="pArtist" class="p-artist" dir="auto" aria-label="שם האמן">
+      <a href="#sing" class="btn small">למסך השירה</a>
+    </div>
+    <div class="transport mini">
+      <button id="sPlay" class="round" aria-label="ניגון">▶</button>
+      <span id="sTime" class="t">00:00</span>
+      <input id="sSeek" type="range" min="0" max="100" step="0.01" value="0" aria-label="מיקום בשיר">
+      <span id="sDur" class="t">00:00</span>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="mix" aria-selected="true">מיקס</button>
+      <button role="tab" data-tab="lyrics" aria-selected="false">מילים ותזמון</button>
+      <button role="tab" data-tab="export" aria-selected="false">ייצוא ושמירה</button>
+    </div>
+
+    <div id="tab-mix" class="tab">
+      <div class="card">
+        <h3>עוצמות כלליות</h3>
+        <div class="slider-row"><label for="busPlay">פלייבק</label><input id="busPlay" type="range" min="0" max="1.5" step="0.01"><output id="busPlayV"></output></div>
+        <div class="slider-row"><label for="busVox">שירה</label><input id="busVox" type="range" min="0" max="2" step="0.01"><output id="busVoxV"></output></div>
+        <div class="slider-row"><label for="busMaster">ראשי</label><input id="busMaster" type="range" min="0" max="1.5" step="0.01"><output id="busMasterV"></output></div>
+        <div class="row wrap">
+          <button id="muteVocals" class="chip" aria-pressed="false" hidden>השתק שירה</button>
+          <button id="cmpOriginal" class="chip" aria-pressed="false">האזנה למקור</button>
+          <button id="cmpFx" class="chip" aria-pressed="false">השוואה: ללא אפקטים</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>ערוצי הפלייבק</h3>
+        <ul id="trackList" class="tracks"></ul>
+      </div>
+      <div class="card">
+        <h3>טייקים</h3>
+        <p id="noTakes" class="muted">עוד אין טייקים. הקליטו במסך השירה או ייבאו הקלטה קיימת.</p>
+        <ul id="takeList" class="takes"></ul>
+        <label class="btn ghost small">ייבוא הקלטת שירה קיימת
+          <input id="importTake" type="file" accept="audio/*,.mp3,.wav,.m4a" hidden></label>
+        <p class="muted small">ייבאו רק הקלטה שלכם או של מי שנתן לכם רשות.</p>
+      </div>
+    </div>
+
+    <div id="tab-lyrics" class="tab" hidden>
+      <div class="card">
+        <h3>הכנסת מילים</h3>
+        <textarea id="lyricsText" rows="6" dir="auto" placeholder="הדביקו כאן מילים שמותר לכם להשתמש בהן, שורה בכל שורה"></textarea>
+        <div class="row wrap">
+          <button id="applyText" class="btn small">צור שורות מהטקסט</button>
+          <label class="btn ghost small">ייבוא LRC / SRT<input id="importLyrics" type="file" accept=".lrc,.srt,text/plain" hidden></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>תזמון ידני</h3>
+        <p class="muted">לחצו "התחל סימון", והשיר יתנגן מההתחלה. בכל פעם שהזמר מתחיל שורה – לחצו "סמן שורה" או רווח / Enter.</p>
+        <div class="row wrap">
+          <button id="tapStart" class="btn small">התחל סימון</button>
+          <button id="tapMark" class="btn big-tap" disabled>סמן שורה</button>
+          <button id="tapUndo" class="btn ghost small" disabled>בטל סימון אחרון</button>
+        </div>
+        <div class="row wrap shift">
+          <span>הזזת כל המילים:</span>
+          <button class="chip" data-shift="-0.1">−0.1 ש׳</button>
+          <span id="shiftV" class="t">0.00</span>
+          <button class="chip" data-shift="0.1">+0.1 ש׳</button>
+        </div>
+      </div>
+      <ol id="lineList" class="lines"></ol>
+    </div>
+
+    <div id="tab-export" class="tab" hidden>
+      <div class="card">
+        <h3>ייצוא אודיו (WAV, 24 ביט)</h3>
+        <div class="export-grid">
+          <button class="btn" data-export="mix">מיקס סופי</button>
+          <button class="btn ghost" data-export="playback">פלייבק בלבד</button>
+          <button class="btn ghost" data-export="take">טייק שירה בלבד</button>
+        </div>
+        <label class="switch"><input id="exportTakeFx" type="checkbox" checked> להחיל אפקטים על טייק השירה</label>
+        <p class="muted small">המיקס מכיל את העוצמות, ההיסט והאפקטים שאתם שומעים בתצוגה המקדימה. MP3 עדיין לא זמין.</p>
+      </div>
+      <div class="card">
+        <h3>מילים מתוזמנות</h3>
+        <div class="row wrap"><button class="btn ghost" data-export="lrc">LRC</button><button class="btn ghost" data-export="srt">SRT</button></div>
+      </div>
+      <div class="card">
+        <h3>פרויקט מלא</h3>
+        <p class="muted">קובץ zip אחד עם הפלייבק, הערוצים, המילים, הטייקים וההגדרות. אפשר לפתוח אותו בטלפון דרך "פתיחת קובץ פרויקט" בספרייה.</p>
+        <div class="row wrap">
+          <button class="btn" data-export="project">ייצוא קובץ פרויקט</button>
+          <button id="saveNow" class="btn ghost">שמירה עכשיו</button>
+          <button id="deleteProject" class="btn danger small">מחיקת הפרויקט מהמכשיר</button>
+        </div>
+      </div>
+      <p id="exportMsg" class="msg" role="status"></p>
+      <p id="storageInfo" class="muted small"></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div id="dialog" class="dialog" hidden role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+  <div class="dlg-box">
+    <h3 id="dlgTitle"></h3>
+    <div id="dlgBody"></div>
+    <div class="row end"><button id="dlgCancel" class="btn ghost small">ביטול</button><button id="dlgOk" class="btn small">אישור</button></div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

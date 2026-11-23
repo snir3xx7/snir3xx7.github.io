@@ -1,0 +1,25 @@
+{
+  "format": "karaoke-studio-catalog/1",
+  "about": "קטלוג קריוקי סטודיו. כל פריט מציין מקור, סוג שימוש מותר וקישור מקורי. ראו docs/catalog-format.md",
+  "items": [
+    {
+      "id": "demo-laila-bair",
+      "title": "לילה בעיר",
+      "artist": "קריוקי סטודיו (שיר מקורי להדגמה)",
+      "lang": "he",
+      "type": "studio",
+      "source": "קריוקי סטודיו",
+      "license": "שיר, לחן ומילים מקוריים שנוצרו עבור הפרויקט. מותר לשיר, להקליט, לערוך ולייצא.",
+      "url": "",
+      "project": {
+        "song": "demo/demo-song.json",
+        "tracks": [
+          { "name": "תופים", "role": "drums", "file": "demo/drums.mp3" },
+          { "name": "בס", "role": "bass", "file": "demo/bass.mp3" },
+          { "name": "קלידים", "role": "keys", "file": "demo/keys.mp3" },
+          { "name": "קול (מנחה)", "role": "vocals", "file": "demo/vocals.mp3", "mute": true }
+        ]
+      }
+    }
+  ]
+}
